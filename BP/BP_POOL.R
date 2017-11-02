@@ -1,5 +1,8 @@
 #BP on pooling layer
-BP_Pool<-function(D,M,p){
+BP_Pool<-function(D, #deltas of next layer
+                  M, #indices of max
+                  p #padding
+                 ){
   h=dim(D)[1]
   w=dim(D)[2]
   d=dim(D)[3]
