@@ -1,5 +1,10 @@
 #performs BP on a FC layer
-BP_FC<-function(Y1,Y2,deltas,W,noWeight=FALSE){
+BP_FC<-function(Y1, #output of layer l+1
+                Y2, #output of layer l-1
+                deltas, #derivatives w.r.t. Z
+                W, #weights
+                noWeight=FALSE #only to compute deltas or not
+               ){
   
   grads=c()
   grads_b=c()
