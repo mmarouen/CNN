@@ -1,4 +1,4 @@
-#convert an Image to columns matrix using a weight
+#convert an Image to 3D tensor using a weight
 #Input:
 #  Im: image of dimension 4
 #  W:  weights vector
