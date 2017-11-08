@@ -9,12 +9,10 @@ padZeros<-function(Im,z1,z2){
   w=dim(Im)[2]
   d=dim(Im)[3]
   N=dim(Im)[4]
-  p1=sample(c(floor((h-z1)/2),ceiling((h-z1)/2)),2,replace = F)
-  p1r=p1[1]
-  p1l=p1[2]
-  p2=sample(c(floor((w-z2)/2),ceiling((w-z2)/2)),2,replace = F)
-  p2r=p2[1]
-  p2l=p2[2]
+  p1r=floor((h-z1)/2)
+  p1l=ceiling((h-z1)/2)
+  p2r=ceiling((w-z2)/2)
+  p2l=floor((w-z2)/2)
   
   idx = dim(Im)[-4] + c(p1l+p1r,p2r+p2l,0)
   mat1r=matrix(0,ncol=p1r,nrow=h)
