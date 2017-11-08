@@ -1,13 +1,12 @@
 #Performs BP on a set of images
-#input: 
-#  Y: output vectors
-#  M: maxpool indices
-#  W: weights
-#  resp: response vector
-#  arch: architecture table
-#  lr: learning rate
 
-BP<-function(Y,M,W,resp,arch,lr){
+BP<-function(Y, #activations
+             M, #switches matrix list
+             W, #shared weights
+             resp, #response matrix
+             arch, #architecture table
+             lr #learning rate
+            ){
   deltas=list()
   gradRaw=list()
   gradRaw_b=list()
@@ -40,13 +39,8 @@ BP<-function(Y,M,W,resp,arch,lr){
       }
       if(l_name=="P" & l<(L-1)){
         p=arch[1,l-1]
-        if(colnames(arch)[l]=="F"){
-          bp1=BP_FC(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],TRUE)
-        }
-        if(colnames(arch)[l]=="C"){
-          poolprev=ifelse(colnames(arch)[l+1]=="P",TRUE,FALSE)
-          bp1=BP_Conv(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],arch[,l],poolprev,TRUE)
-        }
+        if(colnames(arch)[l]=="F")bp1=BP_FC(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],TRUE)
+        if(colnames(arch)[l]=="C")bp1=BP_Conv(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],arch[,(l-1):l],FALSE,TRUE)
         deltas1=bp1$deltas
         bp=BP_Pool(deltas1,M[[l]],p)
         deltas[[l]]=bp$deltas
@@ -55,7 +49,7 @@ BP<-function(Y,M,W,resp,arch,lr){
       }
       if(l_name=="C" & l<(L-1)){
         Pool_prev=ifelse(colnames(arch)[l]=="P",TRUE,FALSE)
-        bp=BP_Conv(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],arch[,l-1],Pool_prev,FALSE)
+        bp=BP_Conv(Y[[l]],Y[[l-1]],deltas[[l+1]],W[[l+1]],arch[,(l-1):l],Pool_prev,FALSE)
         deltas[[l]]=bp$deltas
         gradRaw[[l]]=bp$grads
         gradRaw_b[[l]]=bp$grads_b
@@ -70,7 +64,6 @@ BP<-function(Y,M,W,resp,arch,lr){
       b_new=W[[l]]$bias-lr*(1/N)*gradRaw_b[[l]]
       weights[[l]]=list(Weight=W_new,bias=b_new)
     }
-    
   }
   return(list(W=weights,deltas=deltas,grads=gradRaw,grads_b=gradRaw_b))
 }
