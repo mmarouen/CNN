@@ -6,7 +6,10 @@ Netowrk assumes a default architecture as follows:
 Customized architectures can be input by filling the arch table  
 The framework assumes a padding non overlapping of size 2  
 Filter sizes and steps can be set manually  
-The network uses cross correlation instead of direct correlation  
+The network uses cross correlation without flip.  
+Key assumptions:  
+1. Final layer is FC layer  
+2. CONV layer cannot directly be followed by FC layer  
 Here we describe API notations  
 # 1. Layers: 
 There are L+1 layer including final layer (Input data is denoted as layer 1 
