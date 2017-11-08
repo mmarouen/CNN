@@ -1,12 +1,11 @@
 #Performs forward propagation
-#Input: 
-#  Im:input images
-#  W: network weights
-#  archi:architecture table
-#  zeroPad: TRUE/FALSE
 
 
-FP<-function(Im,W,archi,zeroPad){
+FP<-function(Im, #input images (4D tensor
+             W, #input weights (4-D tensor
+             archi, #architecture matrix
+             zeroPad #binary
+            ){
   
   L=length(W)
   Z=list() #linear convolutions
@@ -23,7 +22,6 @@ FP<-function(Im,W,archi,zeroPad){
       p1=archi[3,l-1]
       p2=archi[4,l-1]
       fp=FP_Conv(Y[[l-1]],W[[l]],p1,p2,zeroPad)
-      Z[[l]]=fp$Z
       Y[[l]]=fp$new_Im
       M[[l]]=0
     }
@@ -31,26 +29,17 @@ FP<-function(Im,W,archi,zeroPad){
       p1=archi[3,l-1]
       p2=archi[4,l-1]
       mask=c(archi[1,l-1],archi[2,l-1])
-      fp=FP_Pool(Y[[l-1]],mask,p1,p2,zeroPad)
+      fp=FP_Pool(Y[[l-1]],mask,p1,p2)
       Y[[l]]=fp$Y
       M[[l]]=fp$M
-      Z[[l]]=0
     }
     if(l_name=="F"){
-      fcprev=TRUE
-      if(colnames(archi)[l-2] != "F") fcprev=FALSE
+      outfunction=ifelse(l==L,"Softmax","ReLU")
+      fcprev=ifelse(colnames(archi)[l-2] == "F",TRUE,FALSE)
+      fp=FP_FC(Y[[l-1]],W[[l]],outF=outfunction,fcprev)
+      Y[[l]]=fp$Y
       M[[l]]=0
-      if(l<L){
-        fp=FP_FC(Y[[l-1]],W[[l]],outF="ReLU",fcprev)
-        Y[[l]]=fp$Y
-        Z[[l]]=fp$Z
-      }
-      if(l==L){
-        fp=FP_FC(Y[[l-1]],W[[l]],outF="Softmax",fcprev)
-        Y[[l]]=fp$Y
-        Z[[l]]=fp$Z
-      }
     }
   }
-  return(list(Y=Y,Z=Z,M=M))
+  return(list(Y=Y,M=M))
 }
