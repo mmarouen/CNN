@@ -1,7 +1,8 @@
 #BP on pooling layer
-BP_Pool<-function(D, #deltas of next layer
-                  M, #indices of max
-                  p #padding
+#Basically it upscales the gradient to the CONV layers
+BP_Pool<-function(D, #deltas coming from FC or CONV layers
+                  M, #switches indicating position of maximum
+                  p #stride
                  ){
   h=dim(D)[1]
   w=dim(D)[2]
